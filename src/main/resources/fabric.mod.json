@@ -4,7 +4,7 @@
   "name": "Framejob",
   "version": "${version}",
   "environment": "client",
-  "description": "Smooths swings, FOV, hand sway and the sneak camera between ticks for high FPS recordings",
+  "description": "Smooths swings, block-hits, FOV, hand sway and the sneak camera between ticks for high FPS recordings",
   "authors": ["Z1xus"],
   "contact": {
     "issues": "https://github.com/Z1xus/framejob/issues",

@@ -29,7 +29,6 @@ public class Framejob {
     @Switch(title = "Smooth Hand Sway", description = "Eases the held item sway when turning between ticks.")
     public static boolean smoothHandSway = true;
 
-
     //? if = 1.8.9 {
     /*@Switch(title = "Smooth Item Use", description = "Animates the block pose and the hand dip when right clicking.")
     public static boolean smoothItemUse = true;
