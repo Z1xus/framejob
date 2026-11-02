@@ -7,7 +7,7 @@
   "package": "us.z1x.framejob.mixin",
   "compatibilityLevel": "JAVA_${java}",
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   },
   "client": [
     //? if > 1.8.9
