@@ -2,9 +2,7 @@ name: build
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
-  pull_request:
 
 permissions:
   contents: read
@@ -28,12 +26,10 @@ jobs:
             25
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c
       - name: Check the tag matches the mod version
-        if: github.ref_type == 'tag'
         run: grep -Fxq "mod_version=${GITHUB_REF_NAME#v}" gradle.properties
       - run: ./gradlew build
       - run: mkdir dist && cp versions/*/build/libs/*.jar dist/
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
-        if: github.event_name != 'pull_request'
         with:
           subject-path: dist/*.jar
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -43,7 +39,6 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: github.ref_type == 'tag'
     needs: build
     runs-on: ubuntu-latest
     permissions:
