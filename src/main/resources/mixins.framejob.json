@@ -14,8 +14,12 @@
     "MixinPreciseTimer",
     "MixinSmoothFov",
     "MixinSmoothHandSway",
+    //? if = 1.8.9
+    //"MixinSmoothItemUse",
     //? if > 1.8.9
     "MixinSmoothSneakCamera",
-    "MixinSmoothSwing"
+    "MixinSmoothSwing",
+    "MixinSmoothViewBobbing",
+    "MixinSmoothWalkAnimation"
   ]
 }

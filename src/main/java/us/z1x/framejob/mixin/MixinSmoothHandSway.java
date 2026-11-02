@@ -39,6 +39,6 @@ public class MixinSmoothHandSway {
     //?}
     //?}
     private float framejob$smoothHandSway(float tickDelta) {
-        return Framejob.enabled && Framejob.smoothHandSway ? Framejob.exponentialTickDelta(tickDelta) : tickDelta;
+        return Framejob.enabled && Framejob.smoothHandSway ? Framejob.exponentialTickDelta(tickDelta, 0.5F) : tickDelta;
     }
 }

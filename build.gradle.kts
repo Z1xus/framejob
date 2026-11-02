@@ -25,6 +25,8 @@ if (isOrnithe) {
     configurations.configureEach { exclude(group = "org.lwjgl.lwjgl") }
     extensions.getByType<PloceusGradleExtensionApi>().setIntermediaryGeneration(2)
     sourceSets.main { java.exclude("**/MixinPreciseTimer.java", "**/MixinSmoothSneakCamera.java") }
+} else {
+    sourceSets.main { java.exclude("**/MixinSmoothItemUse.java") }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)

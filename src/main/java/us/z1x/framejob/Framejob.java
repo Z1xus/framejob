@@ -42,7 +42,16 @@ public class Framejob {
     @Switch(title = "Smooth Hand Sway", description = "Eases the held item sway when turning between ticks.")
     public static boolean smoothHandSway = true;
 
-    //? if > 1.8.9 {
+    @Switch(title = "Smooth View Bobbing", description = "Eases the camera bob when starting and stopping walking between ticks.")
+    public static boolean smoothViewBobbing = true;
+
+    @Switch(title = "Smooth Walk Animation", description = "Eases the leg swing of players and mobs between ticks.")
+    public static boolean smoothWalkAnimation = true;
+
+    //? if = 1.8.9 {
+    /*@Switch(title = "Smooth Item Use", description = "Animates the block pose and the hand dip when right clicking.")
+    public static boolean smoothItemUse = true;
+    *///?} else {
     @Switch(title = "Smooth Sneak Camera", description = "Eases the camera height when sneaking between ticks.")
     public static boolean smoothSneakCamera = true;
 
@@ -50,8 +59,8 @@ public class Framejob {
     public static boolean preciseClock = true;
     //?}
 
-    public static float exponentialTickDelta(float tickDelta) {
-        return 2 * (1 - (float) Math.pow(0.5, tickDelta));
+    public static float exponentialTickDelta(float tickDelta, float rate) {
+        return (1 - (float) Math.pow(1 - rate, tickDelta)) / rate;
     }
 
     public static void load() throws IllegalAccessException {
