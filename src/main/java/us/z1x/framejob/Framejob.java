@@ -24,8 +24,8 @@ public class Framejob {
     @Switch(title = "Smooth Swings", description = "Eases the arm swing between ticks.")
     public static boolean smoothSwings = true;
 
-    @Switch(title = "Restarts Only", description = "Only smooths swings restarted mid swing. Normal swings stay vanilla.")
-    public static boolean smoothRestartsOnly = true;
+    @Switch(title = "Smooth Whole Swing", description = "Also smooths the middle of every swing. Smoother, but trails by about a tick.")
+    public static boolean smoothWholeSwing;
 
     @Slider(
             title = "Swing Smoothing",
@@ -34,7 +34,7 @@ public class Framejob {
             max = 3,
             step = 0.25F
     )
-    public static float swingSmoothing = 1;
+    public static float swingSmoothing = 0.5F;
 
     @Switch(title = "Smooth FOV", description = "Eases sprint, speed and bow FOV changes between ticks.")
     public static boolean smoothFov = true;
