@@ -1,0 +1,8 @@
+.gradle/
+build/
+run/
+.idea/
+*.iml
+.DS_Store
+versions/*/*
+!versions/*/gradle.properties

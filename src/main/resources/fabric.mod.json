@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "framejob",
+  "name": "Framejob",
+  "version": "${version}",
+  "environment": "client",
+  "description": "Smooth sword swings that look good on recordings",
+  "authors": ["Z1xus"],
+  "contact": {
+    "issues": "https://github.com/Z1xus/framejob/issues",
+    "sources": "https://github.com/Z1xus/framejob"
+  },
+  "license": "MIT",
+  "entrypoints": {
+    "oneconfig:config": ["us.z1x.framejob.FramejobConfig::register"]
+  },
+  "mixins": ["mixins.framejob.json"],
+  "depends": {
+    "minecraft": "${minecraft}",
+    "fabricloader": ">=0.19.5",
+    "java": ">=${java}"
+  }
+}
