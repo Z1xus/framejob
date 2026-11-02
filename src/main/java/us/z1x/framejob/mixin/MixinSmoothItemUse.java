@@ -26,7 +26,7 @@ import java.nio.FloatBuffer;
 @Mixin(ItemInHandRenderer.class)
 public class MixinSmoothItemUse {
     @Unique
-    private static final float FRAMEJOB_BLOCK_RATE = 0.95F;
+    private static final float FRAMEJOB_BLOCK_DECAY = 0.05F;
     @Unique
     private static final int FRAMEJOB_MODELVIEW_MATRIX = 0x0BA6;
     @Unique
@@ -41,19 +41,25 @@ public class MixinSmoothItemUse {
     private float handHeight;
 
     @Unique
-    private final float[] framejob$holdPose = new float[16];
-    @Unique
-    private final float[] framejob$blockPose = new float[16];
-    @Unique
     private final float[] framejob$pose = new float[16];
+    @Unique
+    private final float[] framejob$shown = new float[16];
+    @Unique
+    private final float[] framejob$offset = new float[16];
+    @Unique
+    private final float[] framejob$scaleOffset = new float[3];
+    @Unique
+    private int framejob$ticks;
+    @Unique
+    private float framejob$switchTime;
+    @Unique
+    private boolean framejob$wasBlocking;
+    @Unique
+    private boolean framejob$hasShown;
     @Unique
     private float framejob$heldHeight;
     @Unique
     private boolean framejob$dropped;
-    @Unique
-    private float framejob$blocking;
-    @Unique
-    private float framejob$lastBlocking;
 
     @Inject(method = {"onItemUsed", "onBlockUsed"}, at = @At("HEAD"))
     private void framejob$holdHeight(CallbackInfo ci) {
@@ -69,18 +75,12 @@ public class MixinSmoothItemUse {
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void framejob$advance(CallbackInfo ci) {
+        this.framejob$ticks++;
         if (this.framejob$dropped) {
             this.handHeight = 0;
             this.framejob$dropped = false;
         }
-        if (!this.framejob$canBlock()) {
-            this.framejob$blocking = this.framejob$lastBlocking = 0;
-            return;
-        }
-        this.framejob$lastBlocking = this.framejob$blocking;
-        float target = this.framejob$isBlocking() ? 1 : 0;
-        this.framejob$blocking += (target - this.framejob$blocking) * FRAMEJOB_BLOCK_RATE;
-        if (Math.abs(target - this.framejob$blocking) < 0.001F) this.framejob$blocking = target;
+        if (!this.framejob$canBlock()) this.framejob$hasShown = false;
     }
 
     @WrapOperation(
@@ -90,7 +90,7 @@ public class MixinSmoothItemUse {
                     target = "Lnet/minecraft/client/render/ItemInHandRenderer;render(Lnet/minecraft/entity/living/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resource/model/ModelTransformations$Type;)V"
             )
     )
-    private void framejob$blendBlocking(
+    private void framejob$easeBlocking(
             ItemInHandRenderer renderer,
             LivingEntity entity,
             ItemStack stack,
@@ -100,15 +100,24 @@ public class MixinSmoothItemUse {
     ) {
         if (Framejob.enabled && Framejob.smoothItemUse && this.framejob$canBlock()) {
             boolean blocking = this.framejob$isBlocking();
+            float time = this.framejob$ticks + tickDelta;
             GlStateManager.getFloat(FRAMEJOB_MODELVIEW_MATRIX, FRAMEJOB_BUFFER);
-            FRAMEJOB_BUFFER.get(blocking ? this.framejob$blockPose : this.framejob$holdPose).rewind();
-            float amount = this.framejob$lastBlocking + (this.framejob$blocking - this.framejob$lastBlocking) * Framejob.exponentialTickDelta(tickDelta, FRAMEJOB_BLOCK_RATE);
-            if (amount != (blocking ? 1 : 0) && this.framejob$holdPose[15] != 0 && this.framejob$blockPose[15] != 0) {
-                framejob$blend(this.framejob$holdPose, this.framejob$blockPose, amount, this.framejob$pose);
-                FRAMEJOB_BUFFER.put(this.framejob$pose).rewind();
+            FRAMEJOB_BUFFER.get(this.framejob$pose).rewind();
+            if (this.framejob$hasShown && blocking != this.framejob$wasBlocking) {
+                for (int i = 0; i < 16; i++) this.framejob$offset[i] = this.framejob$shown[i] - this.framejob$pose[i];
+                for (int i = 0; i < 3; i++) this.framejob$scaleOffset[i] = framejob$length(this.framejob$shown, i * 4) - framejob$length(this.framejob$pose, i * 4);
+                this.framejob$switchTime = time;
+            }
+            float weight = this.framejob$hasShown ? (float) Math.pow(FRAMEJOB_BLOCK_DECAY, time - this.framejob$switchTime) : 0;
+            for (int i = 0; i < 16; i++) this.framejob$shown[i] = this.framejob$pose[i] + this.framejob$offset[i] * weight;
+            if (weight > 0.001F) {
+                if (framejob$isRigid(this.framejob$pose)) framejob$makeRigid(this.framejob$shown, this.framejob$pose, this.framejob$scaleOffset, weight);
+                FRAMEJOB_BUFFER.put(this.framejob$shown).rewind();
                 GlStateManager.loadIdentity();
                 GlStateManager.multMatrix(FRAMEJOB_BUFFER);
             }
+            this.framejob$wasBlocking = blocking;
+            this.framejob$hasShown = true;
         }
         original.call(renderer, entity, stack, type);
     }
@@ -124,29 +133,35 @@ public class MixinSmoothItemUse {
     }
 
     @Unique
-    private static void framejob$blend(float[] from, float[] to, float t, float[] out) {
-        for (int i = 0; i < 16; i++) out[i] = from[i] + (to[i] - from[i]) * t;
-        float scaleX = framejob$lerpScale(from, to, 0, t);
-        float scaleY = framejob$lerpScale(from, to, 4, t);
-        float scaleZ = framejob$lerpScale(from, to, 8, t);
-        framejob$normalize(out, 0);
-        float dot = out[0] * out[4] + out[1] * out[5] + out[2] * out[6];
-        for (int i = 0; i < 3; i++) out[4 + i] -= out[i] * dot;
-        framejob$normalize(out, 4);
-        out[8] = out[1] * out[6] - out[2] * out[5];
-        out[9] = out[2] * out[4] - out[0] * out[6];
-        out[10] = out[0] * out[5] - out[1] * out[4];
+    private static boolean framejob$isRigid(float[] matrix) {
+        return Math.abs(framejob$cosine(matrix, 0, 4)) < 0.001F
+                && Math.abs(framejob$cosine(matrix, 0, 8)) < 0.001F
+                && Math.abs(framejob$cosine(matrix, 4, 8)) < 0.001F;
+    }
+
+    @Unique
+    private static void framejob$makeRigid(float[] matrix, float[] pose, float[] scaleOffset, float weight) {
+        float scaleX = framejob$length(pose, 0) + scaleOffset[0] * weight;
+        float scaleY = framejob$length(pose, 4) + scaleOffset[1] * weight;
+        float scaleZ = framejob$length(pose, 8) + scaleOffset[2] * weight;
+        framejob$normalize(matrix, 0);
+        float dot = matrix[0] * matrix[4] + matrix[1] * matrix[5] + matrix[2] * matrix[6];
+        for (int i = 0; i < 3; i++) matrix[4 + i] -= matrix[i] * dot;
+        framejob$normalize(matrix, 4);
+        matrix[8] = matrix[1] * matrix[6] - matrix[2] * matrix[5];
+        matrix[9] = matrix[2] * matrix[4] - matrix[0] * matrix[6];
+        matrix[10] = matrix[0] * matrix[5] - matrix[1] * matrix[4];
         for (int i = 0; i < 3; i++) {
-            out[i] *= scaleX;
-            out[4 + i] *= scaleY;
-            out[8 + i] *= scaleZ;
+            matrix[i] *= scaleX;
+            matrix[4 + i] *= scaleY;
+            matrix[8 + i] *= scaleZ;
         }
     }
 
     @Unique
-    private static float framejob$lerpScale(float[] from, float[] to, int column, float t) {
-        float start = framejob$length(from, column);
-        return start + (framejob$length(to, column) - start) * t;
+    private static float framejob$cosine(float[] matrix, int a, int b) {
+        float dot = matrix[a] * matrix[b] + matrix[a + 1] * matrix[b + 1] + matrix[a + 2] * matrix[b + 2];
+        return dot / (framejob$length(matrix, a) * framejob$length(matrix, b));
     }
 
     @Unique

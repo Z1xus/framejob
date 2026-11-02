@@ -58,13 +58,7 @@ public class Framejob {
         Properties properties = new Properties();
         for (Field field : Framejob.class.getFields()) {
             String value = saved.getProperty(field.getName());
-            try {
-                if (value != null) {
-                    field.set(null, field.getType() == boolean.class ? Boolean.parseBoolean(value) : Float.parseFloat(value));
-                }
-            } catch (NumberFormatException e) {
-                LOGGER.warn("Ignoring {}={} in {}", field.getName(), value, path);
-            }
+            if (value != null) field.set(null, Boolean.parseBoolean(value));
             properties.setProperty(field.getName(), String.valueOf(field.get(null)));
         }
         if (properties.equals(saved)) return;

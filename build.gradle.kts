@@ -64,6 +64,6 @@ tasks.processResources {
         "loader" to loaderVersion,
     )
     inputs.properties(properties)
-    filesMatching(listOf("fabric.mod.json", "mixins.framejob.json")) { expand(properties) }
+    filesMatching(listOf("fabric.mod.json", "mixins.framejob.json", "mixins.framejob.optional.json")) { expand(properties) }
     from(rootProject.file("LICENSE")) { into("META-INF") }
 }

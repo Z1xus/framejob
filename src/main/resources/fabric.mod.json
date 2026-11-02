@@ -15,7 +15,7 @@
     "client": ["us.z1x.framejob.Framejob::load"],
     "oneconfig:config": ["us.z1x.framejob.FramejobConfig::register"]
   },
-  "mixins": ["mixins.framejob.json"],
+  "mixins": ["mixins.framejob.json", "mixins.framejob.optional.json"],
   "depends": {
     "minecraft": "${minecraft}",
     "fabricloader": ">=${loader}",
