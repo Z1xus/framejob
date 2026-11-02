@@ -75,13 +75,14 @@ public class MixinSmoothSwing {
     @ModifyReturnValue(method = "getAnimation", at = @At("RETURN"))
     //?}
     private float framejob$smoothSwing(float progress, float tickDelta) {
-        if (!Framejob.enabled) return progress;
+        if (!Framejob.enabled || !Framejob.smoothSwings) return progress;
         float shown = progress + this.framejob$lagAt(tickDelta);
         return shown - (float) Math.floor(shown);
     }
 
     @Unique
     private float framejob$lagAt(float tickDelta) {
-        return (this.framejob$lag + this.framejob$speed) * (float) Math.exp(-tickDelta) - this.framejob$speed;
+        float trail = this.framejob$speed * Framejob.swingSmoothing;
+        return (this.framejob$lag + trail) * (float) Math.exp(-tickDelta / Framejob.swingSmoothing) - trail;
     }
 }

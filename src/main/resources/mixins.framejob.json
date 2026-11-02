@@ -1,6 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.5"
+  },
   "package": "us.z1x.framejob.mixin",
   "compatibilityLevel": "JAVA_${java}",
   "injectors": {
@@ -9,6 +12,8 @@
   "client": [
     //? if > 1.8.9
     "MixinPreciseTimer",
+    "MixinSmoothFov",
+    "MixinSmoothHandSway",
     "MixinSmoothSwing"
   ]
 }

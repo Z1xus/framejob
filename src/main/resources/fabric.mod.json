@@ -4,7 +4,7 @@
   "name": "Framejob",
   "version": "${version}",
   "environment": "client",
-  "description": "Smooth sword swings that look good on recordings",
+  "description": "Smooth swings, FOV and hand sway that look good on recordings",
   "authors": ["Z1xus"],
   "contact": {
     "issues": "https://github.com/Z1xus/framejob/issues",
@@ -12,12 +12,13 @@
   },
   "license": "MIT",
   "entrypoints": {
+    "client": ["us.z1x.framejob.Framejob::load"],
     "oneconfig:config": ["us.z1x.framejob.FramejobConfig::register"]
   },
   "mixins": ["mixins.framejob.json"],
   "depends": {
     "minecraft": "${minecraft}",
-    "fabricloader": ">=0.19.5",
+    "fabricloader": ">=${loader}",
     "java": ">=${java}"
   }
 }
