@@ -59,7 +59,7 @@ jobs:
           grep -q . notes.md
           {
             echo
-            echo "Built from $GITHUB_SHA in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "Built from \`$GITHUB_SHA\` in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "Verify a jar with \`gh attestation verify <jar> -R $GITHUB_REPOSITORY\`"
           } >> notes.md
           gh release create "$GITHUB_REF_NAME" ./*.jar --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes.md
