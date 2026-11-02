@@ -11,6 +11,7 @@
     "sources": "https://github.com/Z1xus/framejob"
   },
   "license": "MIT",
+  "icon": "assets/framejob/icon.png",
   "entrypoints": {
     "client": ["us.z1x.framejob.Framejob::load"],
     "oneconfig:config": ["us.z1x.framejob.FramejobConfig::register"]
