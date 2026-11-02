@@ -18,8 +18,6 @@
     //"MixinSmoothItemUse",
     //? if > 1.8.9
     "MixinSmoothSneakCamera",
-    "MixinSmoothSwing",
-    "MixinSmoothViewBobbing",
-    "MixinSmoothWalkAnimation"
+    "MixinSmoothSwing"
   ]
 }

@@ -2,7 +2,6 @@ package us.z1x.framejob;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.polyfrost.oneconfig.api.config.v1.annotations.MasterToggle;
-import org.polyfrost.oneconfig.api.config.v1.annotations.Slider;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,20 +20,8 @@ public class Framejob {
     @MasterToggle
     public static boolean enabled = true;
 
-    @Switch(title = "Smooth Swings", description = "Eases the arm swing between ticks.")
+    @Switch(title = "Smooth Swings", description = "Eases the start and restarts of the arm swing.")
     public static boolean smoothSwings = true;
-
-    @Switch(title = "Smooth Whole Swing", description = "Also smooths the middle of every swing. Smoother, but trails by about a tick.")
-    public static boolean smoothWholeSwing;
-
-    @Slider(
-            title = "Swing Smoothing",
-            description = "In ticks. Higher is smoother but trails further behind.",
-            min = 0.25F,
-            max = 3,
-            step = 0.25F
-    )
-    public static float swingSmoothing = 0.5F;
 
     @Switch(title = "Smooth FOV", description = "Eases sprint, speed and bow FOV changes between ticks.")
     public static boolean smoothFov = true;
@@ -42,11 +29,6 @@ public class Framejob {
     @Switch(title = "Smooth Hand Sway", description = "Eases the held item sway when turning between ticks.")
     public static boolean smoothHandSway = true;
 
-    @Switch(title = "Smooth View Bobbing", description = "Eases the camera bob when starting and stopping walking between ticks.")
-    public static boolean smoothViewBobbing = true;
-
-    @Switch(title = "Smooth Walk Animation", description = "Eases the leg swing of players and mobs between ticks.")
-    public static boolean smoothWalkAnimation = true;
 
     //? if = 1.8.9 {
     /*@Switch(title = "Smooth Item Use", description = "Animates the block pose and the hand dip when right clicking.")

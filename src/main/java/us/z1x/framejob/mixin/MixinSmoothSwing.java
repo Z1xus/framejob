@@ -41,11 +41,12 @@ public class MixinSmoothSwing {
     //?}
 
     @Unique
+    private static final float FRAMEJOB_SMOOTHING_TICKS = 0.5F;
+
+    @Unique
     private float framejob$lag;
     @Unique
     private float framejob$speed;
-    @Unique
-    private float framejob$smoothing = 0.5F;
     @Unique
     private float framejob$normalStep;
     @Unique
@@ -54,8 +55,6 @@ public class MixinSmoothSwing {
     @Inject(method = "tick", at = @At("RETURN"))
     private void framejob$advance(CallbackInfo ci) {
         this.framejob$lag = this.framejob$lagAt(1);
-        float smoothing = Framejob.swingSmoothing;
-        this.framejob$smoothing = smoothing >= 0.25F && smoothing <= 3 ? smoothing : 0.5F;
         //? if = 1.8.9 {
         /*float old = this.lastAttackAnimationProgress;
         float current = this.attackAnimationProgress;
@@ -71,7 +70,7 @@ public class MixinSmoothSwing {
         if (step < 0) step++;
         boolean start = step > 0 && this.framejob$lastStep == 0;
         if (current > 0 && step > 0) this.framejob$normalStep = step;
-        this.framejob$speed = Framejob.smoothWholeSwing || start ? step : Math.max(0, step - this.framejob$normalStep);
+        this.framejob$speed = start ? step : Math.max(0, step - this.framejob$normalStep);
         this.framejob$lastStep = step;
     }
 
@@ -101,7 +100,7 @@ public class MixinSmoothSwing {
 
     @Unique
     private float framejob$lagAt(float tickDelta) {
-        float trail = this.framejob$speed * this.framejob$smoothing;
-        return (this.framejob$lag + trail) * (float) Math.exp(-tickDelta / this.framejob$smoothing) - trail;
+        float trail = this.framejob$speed * FRAMEJOB_SMOOTHING_TICKS;
+        return (this.framejob$lag + trail) * (float) Math.exp(-tickDelta / FRAMEJOB_SMOOTHING_TICKS) - trail;
     }
 }
