@@ -23,6 +23,7 @@ if (isOrnithe) {
     pluginManager.apply("ploceus")
     configurations.configureEach { exclude(group = "org.lwjgl.lwjgl") }
     extensions.getByType<PloceusGradleExtensionApi>().setIntermediaryGeneration(2)
+    sourceSets.main { java.exclude("**/MixinPreciseTimer.java") }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)

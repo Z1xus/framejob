@@ -7,6 +7,8 @@
     "defaultRequire": 1
   },
   "client": [
+    //? if > 1.8.9
+    "MixinPreciseTimer",
     "MixinSmoothSwing"
   ]
 }
