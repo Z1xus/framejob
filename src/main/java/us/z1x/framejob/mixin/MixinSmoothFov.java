@@ -41,6 +41,6 @@ public class MixinSmoothFov {
     @ModifyExpressionValue(method = "calculateFov", at = @At("MIXINEXTRAS:EXPRESSION"))
     //?}
     private float framejob$smoothFov(float tickDelta) {
-        return Framejob.enabled && Framejob.smoothFov ? Framejob.halfwayDelta(tickDelta) : tickDelta;
+        return Framejob.enabled && Framejob.smoothFov ? Framejob.exponentialTickDelta(tickDelta) : tickDelta;
     }
 }

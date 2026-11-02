@@ -24,7 +24,13 @@ public class Framejob {
     @Switch(title = "Smooth Swings", description = "Eases the arm swing between ticks.")
     public static boolean smoothSwings = true;
 
-    @Slider(title = "Swing Smoothing", description = "In ticks. Higher is smoother but trails further behind.", min = 0.25F, max = 3, step = 0.25F)
+    @Slider(
+            title = "Swing Smoothing",
+            description = "In ticks. Higher is smoother but trails further behind.",
+            min = 0.25F,
+            max = 3,
+            step = 0.25F
+    )
     public static float swingSmoothing = 1;
 
     @Switch(title = "Smooth FOV", description = "Eases sprint, speed and bow FOV changes between ticks.")
@@ -41,7 +47,7 @@ public class Framejob {
     public static boolean preciseClock = true;
     //?}
 
-    public static float halfwayDelta(float tickDelta) {
+    public static float exponentialTickDelta(float tickDelta) {
         return 2 * (1 - (float) Math.pow(0.5, tickDelta));
     }
 
@@ -59,7 +65,9 @@ public class Framejob {
         for (Field field : Framejob.class.getFields()) {
             String value = saved.getProperty(field.getName());
             try {
-                if (value != null) field.set(null, field.getType() == boolean.class ? Boolean.parseBoolean(value) : Float.parseFloat(value));
+                if (value != null) {
+                    field.set(null, field.getType() == boolean.class ? Boolean.parseBoolean(value) : Float.parseFloat(value));
+                }
             } catch (NumberFormatException e) {
                 LOGGER.warn("Ignoring {}={} in {}", field.getName(), value, path);
             }

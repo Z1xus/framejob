@@ -11,8 +11,8 @@ plugins {
 val stonecutter = extensions.getByName("stonecutter") as StonecutterBuildExtension
 val mcVersion = stonecutter.current.version
 val isOrnithe = mcVersion == "1.8.9"
-val isModern = stonecutter.current.parsed >= "26.1"
-val javaVersion = if (isOrnithe || isModern) 25 else 21
+val isUnobfuscated = stonecutter.current.parsed >= "26.1"
+val javaVersion = if (isOrnithe || isUnobfuscated) 25 else 21
 val loaderVersion = property("fabric_loader_version")
 
 group = "us.z1x"
@@ -48,7 +48,7 @@ dependencies {
         dependencies.extensions.getByType<LoomCompatDependencyExtension>().applyMojangMappings()
     }
     modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
-    compileOnly("org.slf4j:slf4j-api:2.0.18")
+    compileOnly("org.slf4j:slf4j-api:2.0.20")
     for (module in listOf("config", "config-impl")) {
         compileOnly("org.polyfrost.oneconfig:$module:${property("oneconfig_version")}") { isTransitive = false }
     }
@@ -57,7 +57,7 @@ dependencies {
 tasks.processResources {
     val properties = mapOf(
         "version" to version,
-        "minecraft" to if (isModern) "~$mcVersion" else mcVersion,
+        "minecraft" to if (isUnobfuscated) "~$mcVersion" else mcVersion,
         "java" to javaVersion,
         "loader" to loaderVersion,
     )

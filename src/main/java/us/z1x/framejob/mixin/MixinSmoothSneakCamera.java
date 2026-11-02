@@ -19,6 +19,6 @@ public class MixinSmoothSneakCamera {
     @ModifyExpressionValue(method = "alignWithEntity", at = @At("MIXINEXTRAS:EXPRESSION"))
     //?}
     private float framejob$smoothSneakCamera(float tickDelta) {
-        return Framejob.enabled && Framejob.smoothSneakCamera ? Framejob.halfwayDelta(tickDelta) : tickDelta;
+        return Framejob.enabled && Framejob.smoothSneakCamera ? Framejob.exponentialTickDelta(tickDelta) : tickDelta;
     }
 }
