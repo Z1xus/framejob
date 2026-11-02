@@ -5,7 +5,7 @@ import net.ornithemc.ploceus.api.PloceusGradleExtensionApi
 plugins {
     java
     id("dev.kikugie.loom-back-compat")
-    id("ploceus") version "1.17.6" apply false
+    id("ploceus") version "1.19.1" apply false
 }
 
 val stonecutter = extensions.getByName("stonecutter") as StonecutterBuildExtension
@@ -13,6 +13,7 @@ val mcVersion = stonecutter.current.version
 val isOrnithe = mcVersion == "1.8.9"
 val isModern = stonecutter.current.parsed >= "26.1"
 val javaVersion = if (isOrnithe || isModern) 25 else 21
+val loaderVersion = property("fabric_loader_version")
 
 group = "us.z1x"
 version = "${property("mod_version")}+$mcVersion"
@@ -46,7 +47,7 @@ dependencies {
     } else {
         dependencies.extensions.getByType<LoomCompatDependencyExtension>().applyMojangMappings()
     }
-    modImplementation("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
+    modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
     for (module in listOf("config", "config-impl")) {
         compileOnly("org.polyfrost.oneconfig:$module:${property("oneconfig_version")}") { isTransitive = false }
     }
@@ -57,6 +58,7 @@ tasks.processResources {
         "version" to version,
         "minecraft" to if (isModern) "~$mcVersion" else mcVersion,
         "java" to javaVersion,
+        "loader" to loaderVersion,
     )
     inputs.properties(properties)
     filesMatching(listOf("fabric.mod.json", "mixins.framejob.json")) { expand(properties) }
