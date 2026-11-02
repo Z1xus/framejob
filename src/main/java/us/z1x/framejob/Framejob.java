@@ -24,6 +24,9 @@ public class Framejob {
     @Switch(title = "Smooth Swings", description = "Eases the arm swing between ticks.")
     public static boolean smoothSwings = true;
 
+    @Switch(title = "Restarts Only", description = "Only smooths swings restarted mid swing. Normal swings stay vanilla.")
+    public static boolean smoothRestartsOnly = true;
+
     @Slider(
             title = "Swing Smoothing",
             description = "In ticks. Higher is smoother but trails further behind.",

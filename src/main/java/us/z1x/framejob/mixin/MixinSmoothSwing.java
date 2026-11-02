@@ -46,6 +46,8 @@ public class MixinSmoothSwing {
     private float framejob$speed;
     @Unique
     private float framejob$smoothing = 1;
+    @Unique
+    private float framejob$normalStep;
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void framejob$advance(CallbackInfo ci) {
@@ -53,14 +55,20 @@ public class MixinSmoothSwing {
         float smoothing = Framejob.swingSmoothing;
         this.framejob$smoothing = smoothing >= 0.25F && smoothing <= 3 ? smoothing : 1;
         //? if = 1.8.9 {
-        /*float speed = this.attackAnimationProgress - this.lastAttackAnimationProgress;
+        /*float old = this.lastAttackAnimationProgress;
+        float current = this.attackAnimationProgress;
         *///?} elif < 26.3 {
-        /*float speed = this.attackAnim - this.oAttackAnim;
+        /*float old = this.oAttackAnim;
+        float current = this.attackAnim;
         *///?} else {
-        float speed = this.animation - this.oldAnimation;
+        float old = this.oldAnimation;
+        float current = this.animation;
         //?}
-        if (Float.isNaN(speed)) speed = 0;
-        this.framejob$speed = speed < 0 ? speed + 1 : speed;
+        float step = current - old;
+        if (Float.isNaN(step)) step = 0;
+        if (step < 0) step++;
+        if (current > 0 && step > 0) this.framejob$normalStep = step;
+        this.framejob$speed = Framejob.smoothRestartsOnly ? Math.max(0, step - this.framejob$normalStep) : step;
     }
 
     //? if >= 26.3 {
