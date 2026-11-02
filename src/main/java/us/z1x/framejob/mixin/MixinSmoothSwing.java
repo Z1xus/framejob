@@ -42,6 +42,8 @@ public class MixinSmoothSwing {
 
     @Unique
     private static final float FRAMEJOB_SMOOTHING_TICKS = 0.5F;
+    @Unique
+    private static final float FRAMEJOB_EASED_START = 0.25F;
 
     @Unique
     private float framejob$lag;
@@ -49,8 +51,6 @@ public class MixinSmoothSwing {
     private float framejob$speed;
     @Unique
     private float framejob$normalStep;
-    @Unique
-    private float framejob$lastStep;
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void framejob$advance(CallbackInfo ci) {
@@ -68,10 +68,8 @@ public class MixinSmoothSwing {
         float step = current - old;
         if (Float.isNaN(step)) step = 0;
         if (step < 0) step++;
-        boolean start = step > 0 && this.framejob$lastStep == 0;
         if (current > 0 && step > 0) this.framejob$normalStep = step;
-        this.framejob$speed = start ? step : Math.max(0, step - this.framejob$normalStep);
-        this.framejob$lastStep = step;
+        this.framejob$speed = Math.max(0, step - this.framejob$normalStep);
     }
 
     //? if >= 26.3 {
@@ -95,7 +93,15 @@ public class MixinSmoothSwing {
     private float framejob$smoothSwing(float progress, float tickDelta) {
         if (!Framejob.enabled || !Framejob.smoothSwings) return progress;
         float shown = progress + this.framejob$lagAt(tickDelta);
-        return shown - (float) Math.floor(shown);
+        return framejob$easeStart(shown - (float) Math.floor(shown));
+    }
+
+    @Unique
+    private static float framejob$easeStart(float progress) {
+        if (progress >= FRAMEJOB_EASED_START) return progress;
+        float t = progress / FRAMEJOB_EASED_START;
+        float root = (float) Math.sqrt(FRAMEJOB_EASED_START) * t * t * (2.5F - 1.5F * t);
+        return root * root;
     }
 
     @Unique

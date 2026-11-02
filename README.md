@@ -10,7 +10,7 @@ vanilla bends the arm like this
 
 $$\theta = 80^\circ \sin\left(\pi\sqrt{p}\right)$$
 
-it's infinitely steep at $p = 0$. a swing from rest covers half its angle in the first 8 ms. a blended frame shows the sword twice with a gap in between. framejob eases the first tick of the swing in. the swing still ends when vanilla's does
+it's infinitely steep at $p = 0$. a swing from rest covers half its angle in the first 8 ms. a blended frame shows the sword twice with a gap in between. framejob eases the first quarter of every swing in, restarts too. the swing still ends when vanilla's does
 
 ## spam clicking
 
