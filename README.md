@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/Z1xus/framejob/assets/icon.png" width="96" align="right" alt="framejob icon">
+
 # framejob
 
 smooths swings, block-hits, fov, hand sway and the sneak camera between ticks
