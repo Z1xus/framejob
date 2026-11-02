@@ -8,6 +8,7 @@ import org.polyfrost.oneconfig.api.config.v1.collect.impl.OneConfigCollector;
 public class FramejobConfig extends Config {
     private FramejobConfig() {
         super("framejob.json", "Framejob", Category.VISUALS);
+        addDependency("swingSmoothing", "smoothSwings");
     }
 
     @Override

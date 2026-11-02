@@ -24,7 +24,7 @@ if (isOrnithe) {
     pluginManager.apply("ploceus")
     configurations.configureEach { exclude(group = "org.lwjgl.lwjgl") }
     extensions.getByType<PloceusGradleExtensionApi>().setIntermediaryGeneration(2)
-    sourceSets.main { java.exclude("**/MixinPreciseTimer.java") }
+    sourceSets.main { java.exclude("**/MixinPreciseTimer.java", "**/MixinSmoothSneakCamera.java") }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
@@ -48,6 +48,7 @@ dependencies {
         dependencies.extensions.getByType<LoomCompatDependencyExtension>().applyMojangMappings()
     }
     modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
+    compileOnly("org.slf4j:slf4j-api:2.0.18")
     for (module in listOf("config", "config-impl")) {
         compileOnly("org.polyfrost.oneconfig:$module:${property("oneconfig_version")}") { isTransitive = false }
     }

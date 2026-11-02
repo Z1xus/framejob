@@ -44,10 +44,14 @@ public class MixinSmoothSwing {
     private float framejob$lag;
     @Unique
     private float framejob$speed;
+    @Unique
+    private float framejob$smoothing = 1;
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void framejob$advance(CallbackInfo ci) {
         this.framejob$lag = this.framejob$lagAt(1);
+        float smoothing = Framejob.swingSmoothing;
+        this.framejob$smoothing = smoothing >= 0.25F && smoothing <= 3 ? smoothing : 1;
         //? if = 1.8.9 {
         /*float speed = this.attackAnimationProgress - this.lastAttackAnimationProgress;
         *///?} elif < 26.3 {
@@ -60,7 +64,10 @@ public class MixinSmoothSwing {
     }
 
     //? if >= 26.3 {
-    @Inject(method = "start", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity$SwingState;animation:F", opcode = Opcodes.PUTFIELD))
+    @Inject(
+            method = "start",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity$SwingState;animation:F", opcode = Opcodes.PUTFIELD)
+    )
     private void framejob$reset(CallbackInfo ci) {
         this.framejob$lag = 0;
         this.framejob$speed = 0;
@@ -82,7 +89,7 @@ public class MixinSmoothSwing {
 
     @Unique
     private float framejob$lagAt(float tickDelta) {
-        float trail = this.framejob$speed * Framejob.swingSmoothing;
-        return (this.framejob$lag + trail) * (float) Math.exp(-tickDelta / Framejob.swingSmoothing) - trail;
+        float trail = this.framejob$speed * this.framejob$smoothing;
+        return (this.framejob$lag + trail) * (float) Math.exp(-tickDelta / this.framejob$smoothing) - trail;
     }
 }

@@ -24,7 +24,10 @@ public class MixinPreciseTimer {
     @Unique
     private long framejob$lastNanos;
 
-    @WrapOperation(method = "advanceGameTime", at = @At(value = "FIELD", target = "Lnet/minecraft/client/DeltaTracker$Timer;deltaTicks:F", opcode = Opcodes.PUTFIELD))
+    @WrapOperation(
+            method = "advanceGameTime",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/client/DeltaTracker$Timer;deltaTicks:F", opcode = Opcodes.PUTFIELD)
+    )
     private void framejob$preciseDeltaTicks(DeltaTracker.Timer timer, float deltaTicks, Operation<Void> original) {
         long now = System.nanoTime();
         if (Framejob.enabled && Framejob.preciseClock && this.framejob$lastNanos != 0) {
